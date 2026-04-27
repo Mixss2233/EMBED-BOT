@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P3TO NEURAL-INTERFACE V4 | SUPREMACY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-glow: rgba(0, 255, 136, 0.4);
+            --bg-deep: #02060a;
+            --glass: rgba(5, 12, 20, 0.8);
+            --border: rgba(0, 255, 136, 0.2);
+            --discord-blurple: #5865F2;
+            --text-dim: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; cursor: crosshair; }
+        
+        body {
+            background-color: var(--bg-deep);
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* NEURAL BACKGROUND CANVAS */
+        #neural-bg { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; opacity: 0.4; }
+
+        .super-container {
+            width: 98vw; height: 95vh;
+            background: var(--glass);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            display: grid;
+            grid-template-columns: 480px 1fr;
+            box-shadow: 0 0 100px rgba(0, 255, 136, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR: CONTROL NEURAL --- */
+        .neural-controls {
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            background: rgba(0,0,0,0.4);
+        }
+
+        .user-profile {
+            padding: 25px;
+            background: linear-gradient(to right, rgba(0,255,136,0.1), transparent);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 15px;
+        }
+        .user-profile img { width: 50px; height: 50px; border-radius: 12px; border: 2px solid var(--primary); }
+        .user-profile h2 { font-family: 'Orbitron', sans-serif; font-size: 1rem; color: var(--primary); text-shadow: 0 0 10px var(--primary-glow); }
+
+        .tabs-nav {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            border-bottom: 1px solid var(--border);
+        }
+        .tab-btn {
+            padding: 15px 5px; background: none; border: none; color: var(--text-dim);
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            transition: 0.3s; border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: rgba(0,255,136,0.05); }
+
+        .tab-content { padding: 25px; flex: 1; overflow-y: auto; display: none; }
+        .tab-content.active { display: block; }
+
+        /* INPUT DESIGN V4 */
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group label { display: block; font-size: 0.7rem; color: var(--primary); margin-bottom: 8px; font-weight: 800; text-transform: uppercase; }
+        
+        input, textarea {
+            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border);
+            border-radius: 12px; padding: 15px; color: #fff; font-size: 0.9rem;
+            transition: 0.4s;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow); outline: none; background: rgba(0,255,136,0.03); }
+
+        /* PRESETS */
+        .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .btn-preset { padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.75rem; transition: 0.3s; }
+        .btn-preset:hover { background: var(--primary); color: #000; font-weight: 700; }
+
+        /* ACTION AREA */
+        .action-area { padding: 25px; border-top: 1px solid var(--border); }
+        .btn-deploy {
+            width: 100%; padding: 20px; background: var(--primary); color: #000;
+            border-radius: 15px; font-family: 'Orbitron', sans-serif; font-weight: 800;
+            font-size: 1.1rem; border: none; box-shadow: 0 0 30px var(--primary-glow);
+            transition: 0.4s; text-transform: uppercase;
+        }
+        .btn-deploy:hover { transform: translateY(-5px) scale(1.02); filter: brightness(1.1); box-shadow: 0 0 50px var(--primary-glow); }
+
+        /* --- PREVIEW PANEL --- */
+        .neural-preview {
+            background: radial-gradient(circle at center, rgba(0,255,136,0.05) 0%, transparent 70%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; padding: 40px;
+        }
+
+        .device-frame {
+            width: 100%; max-width: 800px;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .device-frame.mobile { max-width: 380px; }
+
+        .discord-mockup {
+            background: #313338; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+        }
+        .discord-header { background: #2b2d31; padding: 15px 20px; font-size: 0.9rem; color: #949ba4; border-bottom: 1px solid rgba(0,0,0,0.2); }
+        .discord-body { padding: 20px; display: flex; gap: 15px; }
+        .bot-pfp { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); }
+        
+        .bot-msg-box { flex: 1; }
+        .bot-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .bot-meta .name { font-weight: 700; }
+        .bot-meta .tag { background: #5865f2; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; }
+
+        .embed-v4 {
+            border-left: 4px solid var(--primary); background: #2b2d31;
+            padding: 15px; border-radius: 4px; margin-top: 5px;
+        }
+
+        /* JSON DEBUGGER */
+        .json-debug {
+            position: absolute; bottom: 30px; right: 30px; width: 300px;
+            background: rgba(0,0,0,0.8); border: 1px solid var(--border);
+            border-radius: 12px; padding: 15px; font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem; color: #00ff88; display: none;
+        }
+
+        .view-toggle { position: absolute; top: 30px; display: flex; gap: 10px; }
+        .tgl-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 0.7rem; }
+        .tgl-btn.active { background: var(--primary); color: #000; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        .typing-sim { font-size: 0.75rem; color: #b5bac1; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <canvas id="neural-bg"></canvas>
+
+    <div class="super-container">
+        <div class="neural-controls">
+            <div class="user-profile">
+                <img src="eeff593c85e4d36ffb0fa63dfaebcfb5.jpg" alt="Mixo">
+                <div>
+                    <h2>HALO TUAN MUDA MIXO</h2>
+                    <p style="font-size: 0.6rem; color: var(--text-dim);">Selamat Datang</p>
+                </div>
+            </div>
+
+            <nav class="tabs-nav">
+                <button class="tab-btn active" onclick="openTab(event, 'contentTab')">Content</button>
+                <button class="tab-btn" onclick="openTab(event, 'assetsTab')">Assets</button>
+                <button class="tab-btn" onclick="openTab(event, 'logicTab')">Presets</button>
+                <button class="tab-btn" onclick="openTab(event, 'debugTab')">JSON</button>
+            </nav>
+
+            <div id="contentTab" class="tab-content active">
+                <div class="input-group">
+                    <label>Embed Title</label>
+                    <input type="text" id="title" placeholder="Masukkan Judul Utama...">
+                </div>
+                <div class="input-group">
+                    <label>Description</label>
+                    <textarea id="desc" rows="6" placeholder="Gunakan \n untuk baris baru..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Color Theme</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="color" id="color" value="#00ff88" style="width: 60px; height: 50px; padding: 5px;">
+                        <input type="text" id="colorText" value="#00ff88">
+                    </div>
+                </div>
+            </div>
+
+            <div id="assetsTab" class="tab-content">
+                <div class="input-group">
+                    <label>Main Image (Banner)</label>
+                    <input type="text" id="image" placeholder="https://image-link.png">
+                </div>
+                <div class="input-group">
+                    <label>Thumbnail (Small Icon)</label>
+                    <input type="text" id="thumbnail" placeholder="https://icon-link.png">
+                </div>
+                <div class="input-group">
+                    <label>Footer Text</label>
+                    <input type="text" id="footer" placeholder="Copyright © 2024 P3TO">
+                </div>
+            </div>
+
+            <div id="logicTab" class="tab-content">
+                <label style="font-size: 0.7rem; color: var(--primary); font-weight: 800; display: block; margin-bottom: 15px;">QUICK PRESETS</label>
+                <div class="preset-grid">
+                    <button class="btn-preset" onclick="applyPreset('event')">🎁 Event Mode</button>
+                    <button class="btn-preset" onclick="applyPreset('warning')">⚠️ Warning</button>
+                    <button class="btn-preset" onclick="applyPreset('update')">🚀 Update</button>
+                    <button class="btn-preset" onclick="applyPreset('info')">ℹ️ Information</button>
+                </div>
+                <div class="input-group">
+                    <label>Fields Editor</label>
+                    <div id="fieldsContainer"></div>
+                    <button class="btn-preset" id="addFieldBtn" style="width:100%; border-style:dashed;">+ ADD NEW FIELD</button>
+                </div>
+            </div>
+
+            <div id="debugTab" class="tab-content">
+                <label style="font-size: 0.7rem; color: var(--primary); font-weight: 800;">RAW PAYLOAD</label>
+                <textarea id="rawJson" readonly style="font-family:'JetBrains Mono'; font-size: 0.7rem; color: #00ff88; height: 350px; margin-top: 10px;"></textarea>
+            </div>
+
+            <div class="action-area">
+                <button class="btn-deploy" id="sendBtn">DE-PLOY SYSTEM</button>
+            </div>
+        </div>
+
+        <div class="neural-preview">
+            <div class="view-toggle">
+                <button class="tgl-btn active" onclick="setDevice('desktop')">Desktop</button>
+                <button class="tgl-btn" onclick="setDevice('mobile')">Mobile</button>
+            </div>
+
+            <div class="device-frame" id="deviceFrame">
+                <div class="discord-mockup">
+                    <div class="discord-header"># general-chat</div>
+                    <div class="discord-body">
+                        <div class="bot-pfp"></div>
+                        <div class="bot-msg-box">
+                            <div class="bot-meta">
+                                <span class="name">P3TO NEURAL</span>
+                                <span class="tag">APP</span>
+                                <span style="color: #949ba4; font-size: 0.7rem;">Today at 12:00</span>
+                            </div>
+                            <div id="livePreview"></div>
+                            <div class="typing-sim" id="typingSim">P3TO Neural is typing...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // WEBHOOK TARGET (HARDCODED)
+        const TARGET_WEBHOOK = "https://discord.com/api/webhooks/1498139479704211549/Ptyo-NwQiJQi4n2Z_8NbNC-q_qqpl4pC_q4l0FvtJ9v2yCeesKkiq0neJgqin8QNZqdy";
+
+        // Tab Logic
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Device Toggle
+        function setDevice(type) {
+            const frame = document.getElementById('deviceFrame');
+            const btns = document.querySelectorAll('.tgl-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            if(type === 'mobile') {
+                frame.classList.add('mobile');
+                btns[1].classList.add('active');
+            } else {
+                frame.classList.remove('mobile');
+                btns[0].classList.add('active');
+            }
+        }
+
+        // Neural BG Animation
+        const canvas = document.getElementById('neural-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if(this.x > canvas.width) this.x = 0;
+                if(this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = '#00ff88';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        initCanvas();
+        for(let i=0; i<100; i++) particles.push(new Particle());
+        animate();
+
+        // Core Embed Logic
+        const inputs = ['title', 'desc', 'color', 'colorText', 'image', 'thumbnail', 'footer'];
+        
+        function getFields() {
+            return Array.from(document.querySelectorAll('.f-row')).map(row => ({
+                name: row.querySelector('.f-name').value,
+                value: row.querySelector('.f-val').value,
+                inline: row.querySelector('.f-inline').checked
+            }));
+        }
+
+        function updatePreview() {
+            const typing = document.getElementById('typingSim');
+            typing.style.display = 'block';
+            
+            setTimeout(() => {
+                const title = document.getElementById('title').value || "SYSTEM NEURAL READY";
+                const desc = document.getElementById('desc').value || "Waiting for neural input data...";
+                const color = document.getElementById('colorText').value;
+                const img = document.getElementById('image').value;
+                const thumb = document.getElementById('thumbnail').value;
+                const footer = document.getElementById('footer').value;
+                const fields = getFields();
+
+                let fieldsHtml = '<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">';
+                fields.forEach(f => {
+                    if(f.name) fieldsHtml += `<div><b style="color:#fff; font-size:0.8rem; display:block;">${f.name}</b><span style="color:#dbdee1; font-size:0.8rem;">${f.value}</span></div>`;
+                });
+                fieldsHtml += '</div>';
+
+                document.getElementById('livePreview').innerHTML = `
+                    <div class="embed-v4" style="border-left-color: ${color}">
+                        ${thumb ? `<img src="${thumb}" style="width:60px; height:60px; float:right; border-radius:4px; margin-left:10px;">` : ''}
+                        <div style="font-weight:800; color:#fff; font-size:1.1rem; margin-bottom:8px;">${title}</div>
+                        <div style="color:#dbdee1; font-size:0.9rem; line-height:1.5; white-space:pre-wrap;">${desc}</div>
+                        ${fields.length > 0 ? fieldsHtml : ''}
+                        ${img ? `<img src="${img}" style="width:100%; border-radius:8px; margin-top:15px;">` : ''}
+                        ${footer ? `<div style="color:#949ba4; font-size:0.7rem; margin-top:15px;">${footer}</div>` : ''}
+                    </div>
+                `;
+
+                // Update JSON Debugger
+                const payload = {
+                    embeds: [{
+                        title, description: desc, color: parseInt(color.replace('#',''), 16),
+                        fields: fields.filter(f => f.name),
+                        image: {url: img || null}, thumbnail: {url: thumb || null},
+                        footer: {text: footer || null}
+                    }]
+                };
+                document.getElementById('rawJson').value = JSON.stringify(payload, null, 4);
+                typing.style.display = 'none';
+            }, 500);
+        }
+
+        // Event Listeners
+        inputs.forEach(id => {
+            document.getElementById(id).oninput = (e) => {
+                if(id === 'color') document.getElementById('colorText').value = e.target.value;
+                if(id === 'colorText') document.getElementById('color').value = e.target.value;
+                updatePreview();
+            };
+        });
+
+        document.getElementById('addFieldBtn').onclick = () => {
+            const div = document.createElement('div');
+            div.className = 'f-row';
+            div.style = "background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid var(--border);";
+            div.innerHTML = `
+                <input type="text" class="f-name" placeholder="Field Name" style="padding:8px; margin-bottom:5px;">
+                <input type="text" class="f-val" placeholder="Field Value" style="padding:8px; margin-bottom:5px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label style="font-size:9px;"><input type="checkbox" class="f-inline"> Inline?</label>
+                    <span onclick="this.parentElement.parentElement.remove(); updatePreview();" style="color:#ff4d4d; font-size:10px; cursor:pointer; font-weight:800;">REMOVE</span>
+                </div>
+            `;
+            div.querySelectorAll('input').forEach(i => i.oninput = updatePreview);
+            document.getElementById('fieldsContainer').appendChild(div);
+        };
+
+        function applyPreset(type) {
+            if(type === 'warning') {
+                document.getElementById('title').value = "⚠️ SECURITY ALERT";
+                document.getElementById('desc').value = "Unauthorized access detected in the neural network.";
+                document.getElementById('colorText').value = "#ff4d4d";
+                document.getElementById('color').value = "#ff4d4d";
+            } else if(type === 'update') {
+                document.getElementById('title').value = "🚀 SYSTEM UPDATE V4.0";
+                document.getElementById('desc').value = "Neural Interface has been upgraded to the Supremacy Edition.";
+                document.getElementById('colorText').value = "#00ff88";
+                document.getElementById('color').value = "#00ff88";
+            }
+            updatePreview();
+        }
+
+        document.getElementById('sendBtn').onclick = async () => {
+            const btn = document.getElementById('sendBtn');
+            const originalText = btn.innerText;
+            btn.innerText = "INITIALIZING...";
+            btn.style.opacity = "0.5";
+
+            const payload = JSON.parse(document.getElementById('rawJson').value);
+            payload.embeds[0].timestamp = new Date().toISOString();
+
+            try {
+                const res = await fetch(TARGET_WEBHOOK, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if(res.ok) {
+                    btn.innerText = "DEPLOYED SUCCESSFULLY!";
+                    btn.style.background = "#fff";
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.style.background = "var(--primary)";
+                        btn.style.opacity = "1";
+                    }, 2000);
+                }
+            } catch (e) {
+                alert("Neural Link Error: " + e.message);
+                btn.innerText = originalText;
+                btn.style.opacity = "1";
+            }
+        };
+
+        updatePreview();
+    </script>
+</body>
+</html>
