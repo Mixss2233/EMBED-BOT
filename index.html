@@ -31,7 +31,7 @@
             overflow: hidden;
         }
 
-        /* AMBIENT EFFECTS */
+        /* EFFECTS */
         #neural-bg { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; filter: blur(1px); }
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -54,7 +54,7 @@
             z-index: 20;
         }
 
-        /* --- SIDEBAR CONTROLS --- */
+        /* --- SIDEBAR --- */
         .sidebar {
             background: rgba(0, 0, 0, 0.3);
             border-right: 1px solid var(--glass-border);
@@ -85,10 +85,7 @@
             text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
         }
 
-        .nav-tabs {
-            display: flex;
-            border-bottom: 1px solid var(--glass-border);
-        }
+        .nav-tabs { display: flex; border-bottom: 1px solid var(--glass-border); }
 
         .nav-btn {
             flex: 1; padding: 15px;
@@ -104,9 +101,7 @@
             border-bottom: 2px solid var(--primary);
         }
 
-        .control-scroll {
-            flex: 1; overflow-y: auto; padding: 25px;
-        }
+        .control-scroll { flex: 1; overflow-y: auto; padding: 25px; }
 
         .input-box { margin-bottom: 22px; }
         .input-box label {
@@ -172,10 +167,7 @@
 
         .dev-btn.active { background: var(--primary); color: #000; }
 
-        .mockup-container {
-            width: 100%; max-width: 850px;
-            transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-        }
+        .mockup-container { width: 100%; max-width: 850px; transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1); }
         .mockup-container.mobile { max-width: 380px; }
 
         .discord-window {
@@ -203,7 +195,6 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
-        /* PRESET BUTTONS */
         .preset-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .p-btn {
             background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
@@ -219,7 +210,6 @@
     <canvas id="neural-bg"></canvas>
 
     <div class="main-frame">
-        <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="header-profile">
                 <img src="eeff593c85e4d36ffb0fa63dfaebcfb5.jpg" alt="Mixo">
@@ -232,12 +222,10 @@
             <div class="nav-tabs">
                 <button class="nav-btn active" onclick="switchTab(event, 'tab-content')">CONTENT</button>
                 <button class="nav-btn" onclick="switchTab(event, 'tab-media')">MEDIA</button>
-                <button class="nav-btn" onclick="switchTab(event, 'tab-extra')">PRESETS</button>
                 <button class="nav-btn" onclick="switchTab(event, 'tab-json')">PAYLOAD</button>
             </div>
 
             <div class="control-scroll">
-                <!-- CONTENT TAB -->
                 <div id="tab-content" class="tab-pane" style="display: block;">
                     <div class="input-box">
                         <label>Neural Heading</label>
@@ -256,7 +244,6 @@
                     </div>
                 </div>
 
-                <!-- MEDIA TAB -->
                 <div id="tab-media" class="tab-pane" style="display: none;">
                     <div class="input-box">
                         <label>Primary Image (Banner)</label>
@@ -272,18 +259,6 @@
                     </div>
                 </div>
 
-                <!-- PRESETS TAB -->
-                <div id="tab-extra" class="tab-pane" style="display: none;">
-                    <label style="font-size: 0.7rem; color: var(--primary); display: block; margin-bottom: 10px;">QUICK PROTOCOLS</label>
-                    <div class="preset-row">
-                        <button class="p-btn" onclick="setPreset('alert')">🚨 ALERT</button>
-                        <button class="p-btn" onclick="setPreset('success')">🟢 SUCCESS</button>
-                        <button class="p-btn" onclick="setPreset('maint')">🛠️ MAINT</button>
-                        <button class="p-btn" onclick="setPreset('ghost')">👻 GHOST</button>
-                    </div>
-                </div>
-
-                <!-- JSON TAB -->
                 <div id="tab-json" class="tab-pane" style="display: none;">
                     <textarea id="rawJson" readonly style="height: 380px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--primary);"></textarea>
                 </div>
@@ -294,7 +269,6 @@
             </div>
         </div>
 
-        <!-- VIEWPORT -->
         <div class="viewport">
             <div class="device-selector">
                 <button class="dev-btn active" onclick="setMockup('desktop')">DESKTOP</button>
@@ -303,9 +277,7 @@
 
             <div class="mockup-container" id="mockup">
                 <div class="discord-window">
-                    <div class="ds-top">
-                        <span style="color: #80848e;">#</span> neural-interface
-                    </div>
+                    <div class="ds-top"><span style="color: #80848e;">#</span> neural-interface</div>
                     <div class="ds-msg">
                         <div class="ds-pfp"></div>
                         <div style="flex: 1;">
@@ -323,10 +295,8 @@
     </div>
 
     <script>
-        // WEBHOOK TARGET
         const TARGET = "https://discord.com/api/webhooks/1498139479704211549/Ptyo-NwQiJQi4n2Z_8NbNC-q_qqpl4pC_q4l0FvtJ9v2yCeesKkiq0neJgqin8QNZqdy";
 
-        // UI Logic
         function switchTab(e, id) {
             document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -338,31 +308,20 @@
             const m = document.getElementById('mockup');
             const btns = document.querySelectorAll('.dev-btn');
             btns.forEach(b => b.classList.remove('active'));
-            if(type === 'mobile') {
-                m.classList.add('mobile');
-                btns[1].classList.add('active');
-            } else {
-                m.classList.remove('mobile');
-                btns[0].classList.add('active');
-            }
+            if(type === 'mobile') { m.classList.add('mobile'); btns[1].classList.add('active'); }
+            else { m.classList.remove('mobile'); btns[0].classList.add('active'); }
         }
 
-        // Background Animation
         const canvas = document.getElementById('neural-bg');
         const ctx = canvas.getContext('2d');
         let dots = [];
         window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
         window.onresize();
-
-        for(let i=0; i<80; i++) dots.push({
-            x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-            vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5
-        });
+        for(let i=0; i<80; i++) dots.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 });
 
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.strokeStyle = "rgba(0, 255, 204, 0.1)";
-            ctx.fillStyle = "rgba(0, 255, 204, 0.4)";
+            ctx.strokeStyle = "rgba(0, 255, 204, 0.1)"; ctx.fillStyle = "rgba(0, 255, 204, 0.4)";
             dots.forEach(d => {
                 d.x += d.vx; d.y += d.vy;
                 if(d.x < 0 || d.x > canvas.width) d.vx *= -1;
@@ -370,16 +329,13 @@
                 ctx.beginPath(); ctx.arc(d.x, d.y, 1.5, 0, Math.PI*2); ctx.fill();
                 dots.forEach(d2 => {
                     let dist = Math.hypot(d.x-d2.x, d.y-d2.y);
-                    if(dist < 150) {
-                        ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d2.x, d2.y); ctx.stroke();
-                    }
+                    if(dist < 150) { ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d2.x, d2.y); ctx.stroke(); }
                 });
             });
             requestAnimationFrame(draw);
         }
         draw();
 
-        // Core logic
         const update = () => {
             const title = document.getElementById('title').value || "SYSTEM ONLINE";
             const desc = document.getElementById('desc').value || "Awaiting transmission parameters...";
@@ -398,68 +354,24 @@
                 </div>
             `;
 
-            const payload = {
-                embeds: [{
-                    title, description: desc,
-                    color: parseInt(color.replace('#',''), 16),
-                    image: { url: banner || null },
-                    thumbnail: { url: thumb || null },
-                    footer: { text: footer || null }
-                }]
-            };
+            const payload = { embeds: [{ title, description: desc, color: parseInt(color.replace('#',''), 16), image: { url: banner || null }, thumbnail: { url: thumb || null }, footer: { text: footer || null } }] };
             document.getElementById('rawJson').value = JSON.stringify(payload, null, 4);
         };
 
-        // Inputs interaction
         document.querySelectorAll('input, textarea').forEach(el => el.oninput = update);
-        document.getElementById('colorPicker').oninput = (e) => {
-            document.getElementById('colorHex').value = e.target.value;
-            update();
-        };
+        document.getElementById('colorPicker').oninput = (e) => { document.getElementById('colorHex').value = e.target.value; update(); };
 
-        // Presets
-        function setPreset(type) {
-            if(type === 'alert') {
-                document.getElementById('title').value = "🚨 CRITICAL BREACH";
-                document.getElementById('desc').value = "Security protocols compromised. Immediate action required.";
-                document.getElementById('colorHex').value = "#ff2d55";
-            } else if(type === 'success') {
-                document.getElementById('title').value = "✅ DEPLOYMENT COMPLETE";
-                document.getElementById('desc').value = "All systems operational. Neural bridge established.";
-                document.getElementById('colorHex').value = "#00ffcc";
-            }
-            update();
-        }
-
-        // Send logic
         document.getElementById('deployBtn').onclick = async () => {
             const btn = document.getElementById('deployBtn');
-            btn.innerText = "LINKING...";
-            btn.disabled = true;
-
+            btn.innerText = "LINKING..."; btn.disabled = true;
             try {
                 const payload = JSON.parse(document.getElementById('rawJson').value);
-                payload.embeds[0].timestamp = new Date().toISOString();
-                
-                const res = await fetch(TARGET, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
-                });
-
+                const res = await fetch(TARGET, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
                 if(res.ok) {
                     btn.innerText = "TRANSMITTED!";
-                    btn.style.background = "#fff";
-                    setTimeout(() => {
-                        btn.innerText = "EXECUTE TRANSMISSION";
-                        btn.style.background = "var(--primary)";
-                        btn.disabled = false;
-                    }, 2000);
+                    setTimeout(() => { btn.innerText = "EXECUTE TRANSMISSION"; btn.disabled = false; }, 2000);
                 }
-            } catch(e) {
-                alert("ERR: " + e.message);
-                btn.disabled = false;
-            }
+            } catch(e) { alert("ERR: " + e.message); btn.disabled = false; }
         };
 
         update();
