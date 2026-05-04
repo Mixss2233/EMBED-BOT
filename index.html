@@ -3,378 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P3TO NEURAL-INTERFACE V5 | SUPREMACY</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;500;800&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>P3TO COMMAND DECK | PROTOCOL V6</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono&family=Plus+Jakarta+Sans:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00ffcc;
-            --accent: #7000ff;
-            --danger: #ff2d55;
-            --bg-deep: #05070a;
-            --glass-bg: rgba(10, 15, 25, 0.7);
-            --glass-border: rgba(0, 255, 204, 0.15);
-            --font-main: 'Inter', sans-serif;
-            --font-tech: 'Orbitron', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+            --glow: #00f2ff;
+            --bg: #020406;
+            --card: rgba(10, 20, 30, 0.6);
+            --border: rgba(0, 242, 255, 0.2);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            background-color: var(--bg-deep);
-            color: #e2e8f0;
-            font-family: var(--font-main);
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             overflow: hidden;
+            display: flex;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 70%),
+                linear-gradient(rgba(0, 242, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 50px 50px, 50px 50px;
         }
 
-        /* EFFECTS */
-        #neural-bg { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; filter: blur(1px); }
-        .scanlines {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            background-size: 100% 4px, 3px 100%; z-index: 10; pointer-events: none;
+        /* --- BACKGROUND ORB ANIMATION --- */
+        .orb {
+            position: absolute; width: 400px; height: 400px;
+            background: var(--glow); filter: blur(150px);
+            border-radius: 50%; opacity: 0.1; z-index: -1;
+            animation: float 20s infinite alternate;
         }
 
-        .main-frame {
-            width: 96vw; height: 92vh;
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
+        @keyframes float {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(20%, 30%); }
+        }
+
+        /* --- MAIN LAYOUT --- */
+        .deck-container {
+            width: 100%;
             display: grid;
-            grid-template-columns: 420px 1fr;
-            box-shadow: 0 0 50px rgba(0, 255, 204, 0.05);
-            overflow: hidden;
-            position: relative;
-            z-index: 20;
-        }
-
-        /* --- SIDEBAR --- */
-        .sidebar {
-            background: rgba(0, 0, 0, 0.3);
-            border-right: 1px solid var(--glass-border);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header-profile {
-            padding: 30px;
-            display: flex;
+            grid-template-columns: 1fr 500px 1fr;
+            gap: 30px;
+            padding: 40px;
             align-items: center;
-            gap: 20px;
-            background: linear-gradient(90deg, rgba(0, 255, 204, 0.05), transparent);
         }
 
-        .header-profile img {
-            width: 60px; height: 60px;
-            border-radius: 16px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 15px var(--primary);
+        .module {
+            background: var(--card);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            position: relative;
         }
 
-        .header-profile h1 {
-            font-family: var(--font-tech);
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            color: var(--primary);
-            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        .module::before {
+            content: ''; position: absolute; top: -1px; left: 50px; right: 50px; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--glow), transparent);
         }
 
-        .nav-tabs { display: flex; border-bottom: 1px solid var(--glass-border); }
-
-        .nav-btn {
-            flex: 1; padding: 15px;
-            background: transparent; border: none;
-            color: #64748b; font-family: var(--font-tech);
-            font-size: 0.65rem; font-weight: 700;
-            transition: 0.3s;
+        /* --- CENTER PREVIEW (THE CORE) --- */
+        .core-preview {
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
         }
 
-        .nav-btn.active {
-            color: var(--primary);
-            background: rgba(0, 255, 204, 0.05);
-            border-bottom: 2px solid var(--primary);
+        .discord-mockup {
+            width: 100%;
+            background: #2b2d31;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 5px solid var(--glow);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
-        .control-scroll { flex: 1; overflow-y: auto; padding: 25px; }
+        /* --- INPUT MODULES --- */
+        .module-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: var(--glow);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-        .input-box { margin-bottom: 22px; }
-        .input-box label {
-            display: block; font-family: var(--font-mono);
-            font-size: 0.7rem; color: var(--primary);
-            margin-bottom: 8px; text-transform: uppercase;
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            display: block; font-size: 0.65rem; font-weight: 800;
+            text-transform: uppercase; margin-bottom: 8px; color: #64748b;
         }
 
         input, textarea {
-            width: 100%; background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px; padding: 12px 15px;
-            color: #fff; font-size: 0.85rem; transition: 0.3s;
-        }
-
-        input:focus, textarea:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
-            outline: none;
-        }
-
-        .footer-action {
-            padding: 25px; background: rgba(0, 0, 0, 0.2);
-            border-top: 1px solid var(--glass-border);
-        }
-
-        .btn-send {
-            width: 100%; padding: 18px;
-            background: var(--primary);
-            color: #000; font-family: var(--font-tech);
-            font-weight: 900; border-radius: 12px;
-            border: none; box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
-            transition: 0.4s ease;
-        }
-
-        .btn-send:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 30px rgba(0, 255, 204, 0.5);
-            filter: brightness(1.1);
-        }
-
-        /* --- PREVIEW VIEWPORT --- */
-        .viewport {
-            padding: 40px;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            position: relative;
-        }
-
-        .device-selector {
-            position: absolute; top: 30px;
-            display: flex; gap: 15px;
-            background: rgba(0,0,0,0.4);
-            padding: 8px; border-radius: 50px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .dev-btn {
-            background: none; border: none; color: #fff;
-            padding: 6px 18px; border-radius: 20px;
-            font-size: 0.75rem; font-weight: 600;
-        }
-
-        .dev-btn.active { background: var(--primary); color: #000; }
-
-        .mockup-container { width: 100%; max-width: 850px; transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1); }
-        .mockup-container.mobile { max-width: 380px; }
-
-        .discord-window {
-            background: #313338; border-radius: 16px;
-            overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-        }
-
-        .ds-top {
-            background: #2b2d31; padding: 12px 20px;
-            font-size: 0.8rem; color: #b5bac1;
-            display: flex; align-items: center; gap: 10px;
-        }
-
-        .ds-msg { padding: 20px; display: flex; gap: 16px; }
-        .ds-pfp { width: 45px; height: 45px; border-radius: 50%; background: var(--primary); }
-        
-        .ds-embed {
-            margin-top: 8px; border-radius: 4px;
-            background: #2b2d31; border-left: 4px solid var(--primary);
-            padding: 16px; position: relative;
-        }
-
-        /* CUSTOM SCROLLBAR */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
-
-        .preset-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .p-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
-            color: #fff; padding: 10px; border-radius: 8px; font-size: 0.7rem;
+            width: 100%; background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px; padding: 12px 15px;
+            color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;
             transition: 0.3s;
         }
-        .p-btn:hover { background: var(--primary); color: #000; }
+
+        input:focus { border-color: var(--glow); outline: none; background: rgba(0, 242, 255, 0.05); }
+
+        /* --- OPERATOR INTERFACE --- */
+        .operator-card {
+            display: flex; align-items: center; gap: 15px;
+            padding: 15px; background: rgba(255,255,255,0.03);
+            border-radius: 20px; margin-top: auto;
+        }
+
+        .operator-card img {
+            width: 45px; height: 45px; border-radius: 12px;
+            border: 1px solid var(--glow);
+        }
+
+        /* --- ACTION BUTTON --- */
+        .deploy-btn {
+            width: 100%; padding: 20px;
+            background: transparent; border: 1px solid var(--glow);
+            color: var(--glow); font-family: 'Orbitron', sans-serif;
+            font-weight: 900; border-radius: 15px;
+            cursor: pointer; transition: 0.4s;
+            overflow: hidden; position: relative;
+        }
+
+        .deploy-btn:hover {
+            background: var(--glow);
+            color: #000;
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.4);
+        }
+
+        .status-dot {
+            width: 8px; height: 8px; background: var(--glow);
+            border-radius: 50%; display: inline-block;
+            box-shadow: 0 0 10px var(--glow);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .hex-grid {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cpath fill='%2300f2ff' fill-opacity='1' d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.91v12.68l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.91zM0 15l12.98-7.5V0h2v7.5L28 15v15l-12.98 7.5V45h-2v-7.5L0 30V15z'/%3E%3C/svg%3E");
+        }
     </style>
 </head>
 <body>
 
-    <div class="scanlines"></div>
-    <canvas id="neural-bg"></canvas>
+    <div class="orb"></div>
+    <div class="hex-grid"></div>
 
-    <div class="main-frame">
-        <div class="sidebar">
-            <div class="header-profile">
+    <div class="deck-container">
+        
+        <!-- MODULE LEFT: IDENTITY & MEDIA -->
+        <div class="module">
+            <div class="module-title">
+                <span>IDENTITY MODULE</span>
+                <span class="status-dot"></span>
+            </div>
+            
+            <div class="input-group">
+                <label>Target Webhook URL</label>
+                <input type="text" id="webhook" placeholder="https://discord.com/api/webhooks/...">
+            </div>
+
+            <div class="input-group">
+                <label>Neural Node (Thumbnail)</label>
+                <input type="text" id="thumb" placeholder="URL Image...">
+            </div>
+
+            <div class="input-group">
+                <label>Transmission Banner</label>
+                <input type="text" id="banner" placeholder="URL Image...">
+            </div>
+
+            <div class="operator-card">
                 <img src="eeff593c85e4d36ffb0fa63dfaebcfb5.jpg" alt="Mixo">
                 <div>
-                    <h1>P3TO INTERFACE</h1>
-                    <p style="font-size: 0.6rem; color: #64748b; font-weight: 800;">OPERATOR: MIXO</p>
+                    <p style="font-size: 0.75rem; font-weight: 800; color: var(--glow);">OPERATOR MIXO</p>
+                    <p style="font-size: 0.6rem; color: #64748b;">ID: 04052026-SUPREMACY</p>
                 </div>
-            </div>
-
-            <div class="nav-tabs">
-                <button class="nav-btn active" onclick="switchTab(event, 'tab-content')">CONTENT</button>
-                <button class="nav-btn" onclick="switchTab(event, 'tab-media')">MEDIA</button>
-                <button class="nav-btn" onclick="switchTab(event, 'tab-json')">PAYLOAD</button>
-            </div>
-
-            <div class="control-scroll">
-                <div id="tab-content" class="tab-pane" style="display: block;">
-                    <div class="input-box">
-                        <label>Neural Heading</label>
-                        <input type="text" id="title" placeholder="ENTER TITLE...">
-                    </div>
-                    <div class="input-box">
-                        <label>Core Description</label>
-                        <textarea id="desc" rows="6" placeholder="TRANSMISSION DATA..."></textarea>
-                    </div>
-                    <div class="input-box">
-                        <label>Color Signature</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="color" id="colorPicker" value="#00ffcc" style="width: 50px; padding: 2px;">
-                            <input type="text" id="colorHex" value="#00ffcc" maxlength="7">
-                        </div>
-                    </div>
-                </div>
-
-                <div id="tab-media" class="tab-pane" style="display: none;">
-                    <div class="input-box">
-                        <label>Primary Image (Banner)</label>
-                        <input type="text" id="imgBanner" placeholder="URL Target...">
-                    </div>
-                    <div class="input-box">
-                        <label>Neural Node (Thumbnail)</label>
-                        <input type="text" id="imgThumb" placeholder="URL Target...">
-                    </div>
-                    <div class="input-box">
-                        <label>System Footer</label>
-                        <input type="text" id="footerTxt" placeholder="P3TO NEURAL SYSTEM v5.0">
-                    </div>
-                </div>
-
-                <div id="tab-json" class="tab-pane" style="display: none;">
-                    <textarea id="rawJson" readonly style="height: 380px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--primary);"></textarea>
-                </div>
-            </div>
-
-            <div class="footer-action">
-                <button class="btn-send" id="deployBtn">EXECUTE TRANSMISSION</button>
             </div>
         </div>
 
-        <div class="viewport">
-            <div class="device-selector">
-                <button class="dev-btn active" onclick="setMockup('desktop')">DESKTOP</button>
-                <button class="dev-btn" onclick="setMockup('mobile')">MOBILE</button>
-            </div>
-
-            <div class="mockup-container" id="mockup">
-                <div class="discord-window">
-                    <div class="ds-top"><span style="color: #80848e;">#</span> neural-interface</div>
-                    <div class="ds-msg">
-                        <div class="ds-pfp"></div>
-                        <div style="flex: 1;">
-                            <div style="margin-bottom: 4px;">
-                                <span style="font-weight: 700; color: #fff;">P3TO SYSTEM</span>
-                                <span style="background: #5865f2; font-size: 0.6rem; padding: 2px 4px; border-radius: 3px; margin-left: 5px;">APP</span>
-                                <span style="color: #949ba4; font-size: 0.7rem; margin-left: 8px;">Today at 08:00</span>
-                            </div>
-                            <div id="embed-preview"></div>
+        <!-- MODULE CENTER: CORE PREVIEW -->
+        <div class="core-preview">
+            <div style="font-family: 'Orbitron'; font-size: 0.6rem; color: #64748b; letter-spacing: 5px;">LIVE PREVIEW FEED</div>
+            
+            <div class="discord-mockup" id="preview-box">
+                <div style="display: flex; gap: 15px;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--glow); opacity: 0.2;"></div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 0.85rem; margin-bottom: 5px;">
+                            <span style="font-weight: 700;">P3TO SYSTEM</span> 
+                            <span style="font-size: 0.65rem; color: #949ba4; margin-left: 10px;">Today at 08:53</span>
+                        </div>
+                        <div id="embed-render">
+                            <!-- Preview Content -->
                         </div>
                     </div>
                 </div>
             </div>
+
+            <button class="deploy-btn" id="sendBtn">INITIATE TRANSMISSION</button>
         </div>
+
+        <!-- MODULE RIGHT: DATA CONTENT -->
+        <div class="module">
+            <div class="module-title">
+                <span>DATA PAYLOAD</span>
+                <span style="color: #64748b;">v6.0.4</span>
+            </div>
+
+            <div class="input-group">
+                <label>Neural Heading</label>
+                <input type="text" id="title" placeholder="ENTER TITLE...">
+            </div>
+
+            <div class="input-group">
+                <label>Payload Description</label>
+                <textarea id="desc" rows="8" placeholder="Enter message data..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Color Signature</label>
+                <input type="color" id="color" value="#00f2ff" style="height: 45px; cursor: pointer; padding: 5px;">
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const TARGET = "https://discord.com/api/webhooks/1498139479704211549/Ptyo-NwQiJQi4n2Z_8NbNC-q_qqpl4pC_q4l0FvtJ9v2yCeesKkiq0neJgqin8QNZqdy";
+        const inputs = ['title', 'desc', 'color', 'thumb', 'banner'];
+        
+        function updatePreview() {
+            const data = {
+                title: document.getElementById('title').value || "SYSTEM STANDBY",
+                desc: document.getElementById('desc').value || "Waiting for operator input...",
+                color: document.getElementById('color').value,
+                thumb: document.getElementById('thumb').value,
+                banner: document.getElementById('banner').value
+            };
 
-        function switchTab(e, id) {
-            document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).style.display = 'block';
-            e.target.classList.add('active');
-        }
-
-        function setMockup(type) {
-            const m = document.getElementById('mockup');
-            const btns = document.querySelectorAll('.dev-btn');
-            btns.forEach(b => b.classList.remove('active'));
-            if(type === 'mobile') { m.classList.add('mobile'); btns[1].classList.add('active'); }
-            else { m.classList.remove('mobile'); btns[0].classList.add('active'); }
-        }
-
-        const canvas = document.getElementById('neural-bg');
-        const ctx = canvas.getContext('2d');
-        let dots = [];
-        window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-        window.onresize();
-        for(let i=0; i<80; i++) dots.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 });
-
-        function draw() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.strokeStyle = "rgba(0, 255, 204, 0.1)"; ctx.fillStyle = "rgba(0, 255, 204, 0.4)";
-            dots.forEach(d => {
-                d.x += d.vx; d.y += d.vy;
-                if(d.x < 0 || d.x > canvas.width) d.vx *= -1;
-                if(d.y < 0 || d.y > canvas.height) d.vy *= -1;
-                ctx.beginPath(); ctx.arc(d.x, d.y, 1.5, 0, Math.PI*2); ctx.fill();
-                dots.forEach(d2 => {
-                    let dist = Math.hypot(d.x-d2.x, d.y-d2.y);
-                    if(dist < 150) { ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d2.x, d2.y); ctx.stroke(); }
-                });
-            });
-            requestAnimationFrame(draw);
-        }
-        draw();
-
-        const update = () => {
-            const title = document.getElementById('title').value || "SYSTEM ONLINE";
-            const desc = document.getElementById('desc').value || "Awaiting transmission parameters...";
-            const color = document.getElementById('colorHex').value;
-            const banner = document.getElementById('imgBanner').value;
-            const thumb = document.getElementById('imgThumb').value;
-            const footer = document.getElementById('footerTxt').value;
-
-            document.getElementById('embed-preview').innerHTML = `
-                <div class="ds-embed" style="border-left-color: ${color}">
-                    ${thumb ? `<img src="${thumb}" style="width:60px; height:60px; float:right; border-radius:8px; margin-left:15px;">` : ''}
-                    <div style="font-weight:700; color:#fff; font-size:1rem; margin-bottom:6px;">${title}</div>
-                    <div style="color:#dbdee1; font-size:0.85rem; line-height:1.4; white-space:pre-wrap;">${desc}</div>
-                    ${banner ? `<img src="${banner}" style="width:100%; border-radius:8px; margin-top:15px;">` : ''}
-                    ${footer ? `<div style="color:#949ba4; font-size:0.65rem; margin-top:12px; text-transform:uppercase;">${footer}</div>` : ''}
-                </div>
+            const html = `
+                <div style="color: #fff; font-weight: 700; font-size: 1rem; margin-bottom: 8px;">${data.title}</div>
+                <div style="color: #dbdee1; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap;">${data.desc}</div>
+                ${data.banner ? `<img src="${data.banner}" style="width: 100%; border-radius: 8px; margin-top: 15px; border: 1px solid rgba(255,255,255,0.1);">` : ''}
             `;
+            
+            document.getElementById('embed-render').innerHTML = html;
+            document.getElementById('preview-box').style.borderColor = data.color;
+            document.documentElement.style.setProperty('--glow', data.color);
+        }
 
-            const payload = { embeds: [{ title, description: desc, color: parseInt(color.replace('#',''), 16), image: { url: banner || null }, thumbnail: { url: thumb || null }, footer: { text: footer || null } }] };
-            document.getElementById('rawJson').value = JSON.stringify(payload, null, 4);
-        };
+        inputs.forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
 
-        document.querySelectorAll('input, textarea').forEach(el => el.oninput = update);
-        document.getElementById('colorPicker').oninput = (e) => { document.getElementById('colorHex').value = e.target.value; update(); };
+        document.getElementById('sendBtn').onclick = async () => {
+            const btn = document.getElementById('sendBtn');
+            const webhook = document.getElementById('webhook').value;
+            
+            if(!webhook) return alert("Halt! Webhook URL required.");
 
-        document.getElementById('deployBtn').onclick = async () => {
-            const btn = document.getElementById('deployBtn');
-            btn.innerText = "LINKING..."; btn.disabled = true;
+            btn.innerText = "TRANSMITTING...";
+            btn.style.opacity = "0.5";
+
+            const payload = {
+                embeds: [{
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('desc').value,
+                    color: parseInt(document.getElementById('color').value.replace('#',''), 16),
+                    thumbnail: { url: document.getElementById('thumb').value },
+                    image: { url: document.getElementById('banner').value },
+                    footer: { text: "P3TO COMMAND DECK • OPERATOR: MIXO" },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
             try {
-                const payload = JSON.parse(document.getElementById('rawJson').value);
-                const res = await fetch(TARGET, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-                if(res.ok) {
-                    btn.innerText = "TRANSMITTED!";
-                    setTimeout(() => { btn.innerText = "EXECUTE TRANSMISSION"; btn.disabled = false; }, 2000);
-                }
-            } catch(e) { alert("ERR: " + e.message); btn.disabled = false; }
+                await fetch(webhook, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                btn.innerText = "SUCCESSFUL";
+                setTimeout(() => {
+                    btn.innerText = "INITIATE TRANSMISSION";
+                    btn.style.opacity = "1";
+                }, 2000);
+            } catch(e) {
+                alert("Transmission Failed");
+                btn.innerText = "INITIATE TRANSMISSION";
+                btn.style.opacity = "1";
+            }
         };
 
-        update();
+        updatePreview();
     </script>
 </body>
 </html>
