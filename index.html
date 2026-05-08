@@ -1,291 +1,576 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P3TO SYSTEM | NEURAL INTERFACE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --forest-deep: #05080a;
-            --emerald: #00ffcc; /* Cyan-Emerald yang lebih bercahaya */
-            --glass: rgba(10, 15, 20, 0.7);
-            --border: rgba(0, 255, 204, 0.15);
-            --text-main: #f1f5f9;
-            --text-dim: #64748b;
-            --accent-glow: rgba(0, 255, 204, 0.2);
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+<title>Discord Embed Builder</title>
 
-        body {
-            background-color: var(--forest-deep);
-            color: var(--text-main);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background: 
-                radial-gradient(circle at 50% 50%, rgba(0, 255, 204, 0.05), transparent),
-                linear-gradient(to bottom, rgba(5, 8, 10, 0.9), #000),
-                url('https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?q=80&w=2000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        /* --- BACKGROUND ANIMATION --- */
-        .bg-particles {
-            position: absolute; width: 100%; height: 100%; z-index: -1;
-            background-image: radial-gradient(var(--emerald) 1px, transparent 1px);
-            background-size: 50px 50px; opacity: 0.05;
-            animation: moveBg 20s linear infinite;
-        }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        @keyframes moveBg { from { transform: translateY(0); } to { transform: translateY(-50px); } }
+body{
+    font-family:'Inter',sans-serif;
+    background:
+    radial-gradient(circle at top left,#5865f2 0%,transparent 25%),
+    radial-gradient(circle at bottom right,#8f5cff 0%,transparent 25%),
+    #0f1117;
+    min-height:100vh;
+    color:white;
+    overflow-x:hidden;
+}
 
-        /* --- CONTAINER UTAMA --- */
-        .app-shell {
-            width: 1200px;
-            height: 800px;
-            background: var(--glass);
-            backdrop-filter: blur(40px);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            display: grid;
-            grid-template-columns: 420px 1fr;
-            box-shadow: 0 0 100px rgba(0, 255, 204, 0.1), inset 0 0 40px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            position: relative;
-        }
+.container{
+    display:grid;
+    grid-template-columns: 420px 1fr;
+    gap:30px;
+    padding:30px;
+}
 
-        /* --- SIDEBAR --- */
-        .sidebar {
-            padding: 50px;
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            background: rgba(0, 0, 0, 0.3);
-        }
+.card{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:24px;
+    box-shadow:
+    0 10px 40px rgba(0,0,0,.4),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
 
-        .brand { display: flex; align-items: center; gap: 20px; margin-bottom: 50px; }
-        .brand img {
-            width: 55px; height: 55px; border-radius: 15px;
-            border: 2px solid var(--emerald);
-            box-shadow: 0 0 15px var(--accent-glow);
-            object-fit: cover;
-        }
-        .brand h2 { font-size: 1.2rem; letter-spacing: 2px; text-shadow: 0 0 10px var(--accent-glow); }
+.builder{
+    padding:28px;
+    position:sticky;
+    top:30px;
+    height:fit-content;
+}
 
-        .form-section { flex: 1; overflow-y: auto; padding-right: 15px; }
+.logo{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:30px;
+}
 
-        .input-group { margin-bottom: 28px; position: relative; }
-        .input-group label {
-            display: block; font-size: 0.7rem; font-weight: 700;
-            color: var(--emerald); margin-bottom: 10px; text-transform: uppercase;
-            letter-spacing: 1.5px; opacity: 0.8;
-        }
+.logo-icon{
+    width:52px;
+    height:52px;
+    border-radius:16px;
+    background:linear-gradient(135deg,#5865f2,#8f5cff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+    box-shadow:0 10px 25px rgba(88,101,242,.4);
+}
 
-        input, textarea {
-            width: 100%; background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px;
-            padding: 14px 18px; color: #fff; font-size: 0.95rem;
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+.logo h1{
+    font-size:24px;
+    font-weight:700;
+}
 
-        input:focus, textarea:focus {
-            outline: none; border-color: var(--emerald);
-            background: rgba(0, 255, 204, 0.03);
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
-        }
+.logo p{
+    color:#9ca3af;
+    font-size:14px;
+}
 
-        .btn-deploy {
-            width: 100%; padding: 20px;
-            background: linear-gradient(135deg, var(--emerald), #00d4ff);
-            color: #000; border: none; border-radius: 18px;
-            font-weight: 800; font-size: 0.9rem; letter-spacing: 1px;
-            cursor: pointer; transition: 0.4s;
-            box-shadow: 0 10px 30px rgba(0, 255, 204, 0.2);
-        }
+.form-group{
+    margin-bottom:20px;
+}
 
-        .btn-deploy:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 255, 204, 0.4);
-            filter: brightness(1.1);
-        }
+label{
+    display:block;
+    margin-bottom:10px;
+    font-size:14px;
+    font-weight:600;
+    color:#d1d5db;
+}
 
-        /* --- PREVIEW --- */
-        .preview-area {
-            padding: 60px; display: flex; flex-direction: column; position: relative;
-        }
+input,
+textarea{
+    width:100%;
+    border:none;
+    outline:none;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.06);
+    padding:14px 16px;
+    border-radius:16px;
+    color:white;
+    font-size:15px;
+    transition:.25s;
+}
 
-        .preview-area::after {
-            content: 'P3TO ENGINE V.3.0';
-            position: absolute; bottom: 40px; right: 50px;
-            font-family: 'JetBrains Mono'; font-size: 0.65rem; color: var(--text-dim); opacity: 0.5;
-        }
+textarea{
+    resize:none;
+    min-height:140px;
+}
 
-        .discord-card {
-            background: #2b2d31; border-radius: 20px; padding: 28px; width: 100%;
-            max-width: 580px; box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-            border-left: 5px solid var(--emerald);
-            margin: auto; transform: scale(1.05);
-        }
+input:focus,
+textarea:focus{
+    border-color:#5865f2;
+    box-shadow:0 0 0 4px rgba(88,101,242,.15);
+}
 
-        .ds-header { display: flex; gap: 18px; margin-bottom: 12px; }
-        .ds-avatar { width: 48px; height: 48px; border-radius: 50%; background: #404249; }
-        
-        .embed-content { margin-left: 66px; }
-        .embed-title { font-weight: 700; font-size: 1.1rem; color: #00b0f4; margin-bottom: 6px; }
-        .embed-desc { color: #dbdee1; font-size: 0.95rem; line-height: 1.5; }
-        .embed-banner { width: 100%; border-radius: 10px; margin-top: 18px; border: 1px solid rgba(255,255,255,0.05); }
+.row{
+    display:grid;
+    grid-template-columns:1fr 80px;
+    gap:12px;
+}
 
-        /* Scrollbar */
-        .form-section::-webkit-scrollbar { width: 4px; }
-        .form-section::-webkit-scrollbar-thumb { background: var(--emerald); border-radius: 10px; }
-    </style>
+.color-picker{
+    padding:4px;
+    overflow:hidden;
+}
+
+.color-picker input{
+    height:52px;
+    padding:0;
+    border:none;
+    background:none;
+}
+
+button{
+    width:100%;
+    border:none;
+    padding:16px;
+    border-radius:18px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:700;
+    transition:.25s;
+}
+
+.send-btn{
+    background:linear-gradient(135deg,#5865f2,#8f5cff);
+    color:white;
+    box-shadow:0 15px 35px rgba(88,101,242,.35);
+}
+
+.send-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 20px 45px rgba(88,101,242,.45);
+}
+
+.preview-area{
+    padding:30px;
+}
+
+.preview-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:24px;
+}
+
+.preview-top h2{
+    font-size:28px;
+}
+
+.live-badge{
+    background:rgba(34,197,94,.15);
+    color:#4ade80;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.discord-ui{
+    background:#313338;
+    border-radius:24px;
+    padding:25px;
+    min-height:700px;
+    position:relative;
+    overflow:hidden;
+}
+
+.discord-ui::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+    linear-gradient(
+        180deg,
+        rgba(255,255,255,.03),
+        transparent
+    );
+    pointer-events:none;
+}
+
+.fake-msg{
+    display:flex;
+    gap:16px;
+}
+
+.avatar{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#5865f2,#8f5cff);
+    flex-shrink:0;
+}
+
+.msg-content{
+    width:100%;
+}
+
+.username{
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.timestamp{
+    color:#9ca3af;
+    font-size:12px;
+    margin-left:8px;
+}
+
+.embed{
+    background:#2b2d31;
+    border-left:5px solid #5865f2;
+    border-radius:10px;
+    padding:18px;
+    max-width:620px;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+    animation:fade .25s ease;
+}
+
+.embed-author{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:12px;
+    color:#d1d5db;
+    font-size:14px;
+}
+
+.embed-author img{
+    width:24px;
+    height:24px;
+    border-radius:50%;
+}
+
+.embed-title{
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.embed-desc{
+    color:#d1d5db;
+    line-height:1.6;
+    white-space:pre-wrap;
+}
+
+.embed-image{
+    margin-top:18px;
+    border-radius:12px;
+    width:100%;
+    display:none;
+    max-height:320px;
+    object-fit:cover;
+}
+
+.footer{
+    margin-top:18px;
+    padding-top:14px;
+    border-top:1px solid rgba(255,255,255,.05);
+    display:flex;
+    justify-content:space-between;
+    color:#9ca3af;
+    font-size:13px;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@media(max-width:1000px){
+
+.container{
+    grid-template-columns:1fr;
+}
+
+.builder{
+    position:relative;
+    top:0;
+}
+
+}
+</style>
 </head>
+
 <body>
 
-    <div class="bg-particles"></div>
+<div class="container">
 
-    <div class="app-shell">
-        <aside class="sidebar">
-            <div class="brand">
-                <img src="eeff593c85e4d36ffb0fa63dfaebcfb5.jpg" alt="Mixo">
-                <div>
-                    <h2 style="font-family: 'JetBrains Mono';">P3TO.CORE</h2>
-                    <p style="font-size: 0.65rem; color: var(--emerald); font-weight: 800; letter-spacing: 1px;">STATUS: SUPREME OPERATOR</p>
-                </div>
-            </div>
+<div class="card builder">
 
-            <div class="form-section">
-                <div class="input-group">
-                    <label>Neural Title</label>
-                    <input type="text" id="title" placeholder="Define the signal...">
-                </div>
+<div class="logo">
+<div class="logo-icon">💎</div>
 
-                <div class="input-group">
-                    <label>Transmission Data</label>
-                    <textarea id="desc" rows="5" placeholder="Encrypt your message here..."></textarea>
-                </div>
+<div>
+<h1>Embed Builder</h1>
+<p>Modern Discord Webhook Creator</p>
+</div>
+</div>
 
-                <div class="input-group">
-                    <label>Visual Banner (URL)</label>
-                    <input type="text" id="banner" placeholder="https://image.link/...">
-                </div>
+<div class="form-group">
+<label>Embed Title</label>
+<input type="text" id="title" placeholder="Masukkan title embed">
+</div>
 
-                <div class="input-group">
-                    <label>Aura Signature</label>
-                    <input type="color" id="color" value="#00ffcc" style="height: 50px; padding: 5px;">
-                </div>
-            </div>
+<div class="form-group">
+<label>Description</label>
+<textarea id="description" placeholder="Tulis deskripsi embed..."></textarea>
+</div>
 
-            <div class="action-area" style="margin-top: 30px;">
-                <button class="btn-deploy" id="sendBtn">EXECUTE TRANSMISSION</button>
-            </div>
-        </aside>
+<div class="form-group">
+<label>Image URL</label>
+<input type="text" id="image" placeholder="https://image.com/example.png">
+</div>
 
-        <main class="preview-area">
-            <div style="font-size: 0.7rem; color: var(--emerald); letter-spacing: 3px; font-weight: 700; margin-bottom: 30px;">
-                > REAL_TIME_VISUALIZER.EXE
-            </div>
-            
-            <div class="discord-card" id="card">
-                <div class="ds-header">
-                    <div class="ds-avatar"></div>
-                    <div>
-                        <span style="font-weight: 700; color: #fff;">P3TO SYSTEM</span>
-                        <span style="background: #5865f2; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; font-weight: 800;">BOT</span>
-                        <span style="color: #949ba4; font-size: 0.75rem; margin-left: 10px;">Today at 11:55</span>
-                    </div>
-                </div>
-                <div class="embed-content">
-                    <div class="embed-title" id="p-title" style="color: var(--emerald);">Awaiting Signal...</div>
-                    <div class="embed-desc" id="p-desc">The neural link is stable. Please provide transmission content.</div>
-                    <img src="" id="p-banner" class="embed-banner" style="display: none;">
-                </div>
-            </div>
+<div class="form-group">
+<label>Embed Color</label>
 
-            <div style="margin-top: auto; font-family: 'JetBrains Mono'; font-size: 0.65rem; display: flex; justify-content: space-between; color: var(--text-dim);">
-                <span>ENCRYPTION: AES-256</span>
-                <span>SIGNAL: EXCELLENT</span>
-            </div>
-        </main>
-    </div>
+<div class="row">
 
-    <script>
-        // WEBHOOK PERMANEN
-        const SECRET_WEBHOOK = "https://discord.com/api/webhooks/1498139479704211549/Ptyo-NwQiJQi4n2Z_8NbNC-q_qqpl4pC_q4l0FvtJ9v2yCeesKkiq0neJgqin8QNZqdy";
+<input type="text" id="hexInput" value="#5865f2">
 
-        function update() {
-            const title = document.getElementById('title').value || "Awaiting Signal...";
-            const desc = document.getElementById('desc').value || "The neural link is stable. Please provide transmission content.";
-            const color = document.getElementById('color').value;
-            const banner = document.getElementById('banner').value;
+<div class="color-picker">
+<input type="color" id="color" value="#5865f2">
+</div>
 
-            document.getElementById('p-title').innerText = title;
-            document.getElementById('p-title').style.color = color;
-            document.getElementById('p-desc').innerText = desc;
-            document.getElementById('card').style.borderColor = color;
-            
-            const imgEl = document.getElementById('p-banner');
-            if(banner) {
-                imgEl.src = banner;
-                imgEl.style.display = 'block';
-            } else {
-                imgEl.style.display = 'none';
-            }
-        }
+</div>
+</div>
 
-        ['title', 'desc', 'color', 'banner'].forEach(id => {
-            document.getElementById(id).addEventListener('input', update);
-        });
+<button class="send-btn" onclick="sendEmbed()">
+🚀 Send Embed
+</button>
 
-        document.getElementById('sendBtn').onclick = async () => {
-            const btn = document.getElementById('sendBtn');
-            const title = document.getElementById('title').value;
-            const desc = document.getElementById('desc').value;
+</div>
 
-            if(!title || !desc) return alert("System Error: Content is required for transmission.");
+<div class="card preview-area">
 
-            btn.innerText = "ESTABLISHING LINK...";
-            btn.style.background = "#fff";
-            btn.disabled = true;
+<div class="preview-top">
+<h2>Live Preview</h2>
 
-            const payload = {
-                embeds: [{
-                    title: title,
-                    description: desc,
-                    color: parseInt(document.getElementById('color').value.replace('#',''), 16),
-                    image: { url: document.getElementById('banner').value },
-                    footer: { text: "OPERATED BY MIXO // P3TO CORE" },
-                    timestamp: new Date().toISOString()
-                }]
-            };
+<div class="live-badge">
+● LIVE
+</div>
+</div>
 
-            try {
-                const res = await fetch(SECRET_WEBHOOK, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
-                });
-                
-                if(res.ok) {
-                    btn.innerText = "SUCCESSFULLY TRANSMITTED";
-                    btn.style.background = "var(--emerald)";
-                    setTimeout(() => {
-                        btn.innerText = "EXECUTE TRANSMISSION";
-                        btn.disabled = false;
-                    }, 3000);
-                }
-            } catch(e) {
-                alert("Neural link failed. Check connection.");
-                btn.disabled = false;
-            }
-        };
-    </script>
+<div class="discord-ui">
+
+<div class="fake-msg">
+
+<div class="avatar"></div>
+
+<div class="msg-content">
+
+<div class="username">
+Webhook Bot
+<span class="timestamp">Today at 12:00</span>
+</div>
+
+<div class="embed" id="embedBox">
+
+<div class="embed-author">
+<img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png">
+<span>Discord Embed Builder</span>
+</div>
+
+<div class="embed-title" id="previewTitle">
+Amazing Embed Title
+</div>
+
+<div class="embed-desc" id="previewDesc">
+Beautiful modern Discord embed preview with live rendering.
+</div>
+
+<img class="embed-image" id="previewImage">
+
+<div class="footer">
+<span>Powered by Webhook</span>
+<span id="timeNow"></span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const webhook =
+"https://discord.com/api/webhooks/1498139479704211549/Ptyo-NwQiJQi4n2Z_8NbNC-q_qqpl4pC_q4l0FvtJ9v2yCeesKkiq0neJgqin8QNZqdy";
+
+const titleInput = document.getElementById("title");
+const descInput = document.getElementById("description");
+const imageInput = document.getElementById("image");
+const colorInput = document.getElementById("color");
+const hexInput = document.getElementById("hexInput");
+
+function updateClock(){
+
+const now = new Date();
+
+document.getElementById("timeNow").innerText =
+now.toLocaleTimeString("id-ID",{
+hour:'2-digit',
+minute:'2-digit'
+});
+
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+function updatePreview(){
+
+document.getElementById("previewTitle").innerText =
+titleInput.value || "Amazing Embed Title";
+
+document.getElementById("previewDesc").innerText =
+descInput.value || "Beautiful modern Discord embed preview with live rendering.";
+
+const embed = document.getElementById("embedBox");
+
+embed.style.borderLeftColor = colorInput.value;
+
+const img = document.getElementById("previewImage");
+
+if(imageInput.value){
+
+img.src = imageInput.value;
+img.style.display = "block";
+
+}else{
+
+img.style.display = "none";
+
+}
+
+}
+
+titleInput.addEventListener("input",updatePreview);
+descInput.addEventListener("input",updatePreview);
+imageInput.addEventListener("input",updatePreview);
+
+colorInput.addEventListener("input",()=>{
+
+hexInput.value = colorInput.value;
+updatePreview();
+
+});
+
+hexInput.addEventListener("input",()=>{
+
+colorInput.value = hexInput.value;
+updatePreview();
+
+});
+
+function hexToDecimal(hex){
+return parseInt(hex.replace("#",""),16);
+}
+
+async function sendEmbed(){
+
+const btn = document.querySelector(".send-btn");
+
+btn.innerHTML = "⏳ Sending...";
+btn.disabled = true;
+
+const payload = {
+
+embeds:[{
+
+title:titleInput.value,
+
+description:descInput.value,
+
+color:hexToDecimal(colorInput.value),
+
+image:imageInput.value
+? { url:imageInput.value }
+: undefined,
+
+footer:{
+text:"Sent from Modern Embed Builder"
+},
+
+timestamp:new Date()
+
+}]
+
+};
+
+try{
+
+const res = await fetch(webhook,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(payload)
+});
+
+if(res.ok){
+
+btn.innerHTML = "✅ Embed Sent!";
+
+setTimeout(()=>{
+btn.innerHTML = "🚀 Send Embed";
+btn.disabled = false;
+},2000);
+
+}else{
+
+btn.innerHTML = "❌ Failed";
+
+setTimeout(()=>{
+btn.innerHTML = "🚀 Send Embed";
+btn.disabled = false;
+},2000);
+
+}
+
+}catch(err){
+
+btn.innerHTML = "❌ Error";
+
+setTimeout(()=>{
+btn.innerHTML = "🚀 Send Embed";
+btn.disabled = false;
+},2000);
+
+}
+
+}
+
+updatePreview();
+
+</script>
+
 </body>
 </html>
